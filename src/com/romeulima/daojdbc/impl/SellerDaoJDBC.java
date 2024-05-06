@@ -58,7 +58,6 @@ public class SellerDaoJDBC implements SellerDao {
 
                 return new Seller(sellerId, sellerName, sellerEmail, sellerBirthDate, sellerBaseSalary, new Department(sellerDepartmentId, sellerDepartmentName));
             }
-
             return null;
         }
         catch (SQLException e) {
