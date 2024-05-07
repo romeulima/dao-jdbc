@@ -1,5 +1,6 @@
 package com.romeulima.daojdbc.dao.seller;
 
+import com.romeulima.daojdbc.domain.department.Department;
 import com.romeulima.daojdbc.domain.seller.Seller;
 
 import java.util.List;
@@ -11,4 +12,5 @@ public interface SellerDao {
     void delete(Integer id);
     Seller findById(Integer id);
     List<Seller> findAll();
+    List<Seller> findByDepartment(Department dep);
 }
