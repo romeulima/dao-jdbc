@@ -20,5 +20,11 @@ public class Main {
 
         sellers.forEach(System.out::println);
 
+        System.out.println();
+        System.out.println("=== TEST 3: seller findByAll ====");
+        List<Seller> sellersList = sellerDao.findAll();
+
+        sellersList.forEach(System.out::println);
+
     }
 }
