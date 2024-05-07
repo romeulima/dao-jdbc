@@ -5,10 +5,8 @@ import com.romeulima.daojdbc.db.exceptions.DbException;
 import com.romeulima.daojdbc.domain.department.Department;
 import com.romeulima.daojdbc.domain.seller.Seller;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.sql.Date;
 import java.util.*;
 
 public class SellerDaoJDBC implements SellerDao {
@@ -21,7 +19,35 @@ public class SellerDaoJDBC implements SellerDao {
 
     @Override
     public void insert(Seller seller) {
+        try {
+            PreparedStatement pstm = connection.prepareStatement(
+                    "INSERT INTO seller "
+                            + "(name, email, birthDate, baseSalary, departmentId) "
+                            + "VALUES "
+                            + "(?, ?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
 
+            pstm.setString(1, seller.getName());
+            pstm.setString(2, seller.getEmail());
+            pstm.setDate(3, Date.valueOf(seller.getBirthDate()));
+            pstm.setDouble(4, seller.getBaseSalary());
+            pstm.setInt(5, seller.getDepartment().getId());
+
+            int affectedRows = pstm.executeUpdate();
+
+            if (affectedRows > 0) {
+                ResultSet rs = pstm.getGeneratedKeys();
+
+                if (rs.next()) {
+                   int id = rs.getInt(1);
+                   seller.setId(id);
+                }
+            } else {
+                throw new DbException("Unexpected error! No rows were affected");
+            }
+
+        } catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        }
     }
 
     @Override
@@ -57,25 +83,6 @@ public class SellerDaoJDBC implements SellerDao {
         catch (SQLException e) {
             throw new DbException(e.getMessage());
         }
-    }
-
-    private Seller instantiateSeller(Department dep, ResultSet rs) throws SQLException {
-        Seller seller = new Seller();
-        seller.setId(rs.getInt("id"));
-        seller.setName(rs.getString("name"));
-        seller.setEmail(rs.getString("email"));
-        seller.setBaseSalary(rs.getDouble("baseSalary"));
-        seller.setDepartment(dep);
-
-        return seller;
-    }
-
-    private Department instantiateDepartment(ResultSet rs) throws SQLException {
-        Department dep = new Department();
-        dep.setId(rs.getInt("departmentId"));
-        dep.setName(rs.getString("depName"));
-
-        return dep;
     }
 
     @Override
@@ -142,5 +149,24 @@ public class SellerDaoJDBC implements SellerDao {
         } catch (SQLException e) {
             throw new DbException(e.getMessage());
         }
+    }
+
+    private Seller instantiateSeller(Department dep, ResultSet rs) throws SQLException {
+        Seller seller = new Seller();
+        seller.setId(rs.getInt("id"));
+        seller.setName(rs.getString("name"));
+        seller.setEmail(rs.getString("email"));
+        seller.setBaseSalary(rs.getDouble("baseSalary"));
+        seller.setDepartment(dep);
+
+        return seller;
+    }
+
+    private Department instantiateDepartment(ResultSet rs) throws SQLException {
+        Department dep = new Department();
+        dep.setId(rs.getInt("departmentId"));
+        dep.setName(rs.getString("depName"));
+
+        return dep;
     }
 }
