@@ -3,12 +3,15 @@ import com.romeulima.daojdbc.dao.seller.SellerDao;
 import com.romeulima.daojdbc.domain.department.Department;
 import com.romeulima.daojdbc.domain.seller.Seller;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
 
         SellerDao sellerDao = DaoFactory.createSellerDao();
+        Scanner sc = new Scanner(System.in);
 
         System.out.println("=== TEST 1: seller findById ====");
         Seller seller = sellerDao.findById(7);
@@ -26,17 +29,21 @@ public class Main {
 
         sellersList.forEach(System.out::println);
 
-//        System.out.println();
-//        System.out.println("=== TEST 4: seller insert");
-//        Seller newSeller = new Seller(null, "Lucas Montano", "lucas@gmail.com", LocalDate.now(), 100000.00, new Department(2, null));
-//        sellerDao.insert(newSeller);
-//        System.out.println("new Id = " + newSeller.getId());
+        System.out.println();
+        System.out.println("=== TEST 4: seller insert");
+        Seller newSeller = new Seller(null, "Lucas Montano", "lucas@gmail.com", LocalDate.now(), 100000.00, new Department(2, null));
+        sellerDao.insert(newSeller);
+        System.out.println("new Id = " + newSeller.getId());
 
         System.out.println();
         System.out.println("=== TEST 5: seller update");
         seller.setName("Romeu Lima");
         sellerDao.update(seller);
         System.out.println("updated");
+
+        System.out.println("Digite o id do seller que voce quer remover: ");
+        int id = sc.nextInt();
+        sellerDao.delete(id);
 
     }
 }
